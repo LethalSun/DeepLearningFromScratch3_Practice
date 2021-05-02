@@ -47,37 +47,37 @@ if __name__ == '__main__':
     # print(type(c))
     # print(c.data)
 
-    f = Variable.Square()
-    x = Variable.Variable(np.array(2.0))
+    # f = Variable.Square()
+    # x = Variable.Variable(np.array(2.0))
+    #
+    # dy = numerical_diff(f, x)
+    #
+    # print(dy)
 
-    dy = numerical_diff(f, x)
-
-    print(dy)
-
-    def ff(x):
-        A = Variable.Square()
-        B = Variable.Exp()
-        C = Variable.Square()
-
-        return C(B(A(x)))
-
-    x = Variable.Variable(np.array(0.5))
-    dy = numerical_diff(ff, x)
-
-    print(dy)
-
-
-    def fff(x):
-        A = Variable.Square()
-        B = Variable.Exp()
-
-        return A(B(A(x)))
-
-
-    x = Variable.Variable(np.array(0.5))
-    dy = numerical_diff(fff, x)
-
-    print(dy)
+    # def ff(x):
+    #     A = Variable.Square()
+    #     B = Variable.Exp()
+    #     C = Variable.Square()
+    #
+    #     return C(B(A(x)))
+    #
+    # x = Variable.Variable(np.array(0.5))
+    # dy = numerical_diff(ff, x)
+    #
+    # print(dy)
+    #
+    #
+    # def fff(x):
+    #     A = Variable.Square()
+    #     B = Variable.Exp()
+    #
+    #     return A(B(A(x)))
+    #
+    #
+    # x = Variable.Variable(np.array(0.5))
+    # dy = numerical_diff(fff, x)
+    #
+    # print(dy)
 
     A = Variable.Square()
     B = Variable.Exp()
@@ -89,8 +89,47 @@ if __name__ == '__main__':
     b = B(a)
     y = C(b)
 
+    assert y.creator == C
+    assert y.creator.in_var == b
+    assert y.creator.in_var.creator == B
+    assert y.creator.in_var.creator.in_var == a
+    assert y.creator.in_var.creator.in_var.creator == A
+    assert y.creator.in_var.creator.in_var.creator.in_var == x
+
     y.grad = np.array(1.0)
-    b.grad = C.backward(y.grad)
-    a.grad = B.backward(b.grad)
-    x.grad = A.backward(a.grad)
+
+    y.backward()
+
+    # C = y.creator
+    # b = C.in_var
+    # b.grad = C.backward(y.grad)
+    #
+    # B = b.creator
+    # a = B.in_var
+    # a.grad = B.backward(b.grad)
+    #
+    # A = a.creator
+    # x = A.in_var
+    # x.grad = A.backward(a.grad)
+
+    # b.grad = C.backward(y.grad)
+    # a.grad = B.backward(b.grad)
+    # x.grad = A.backward(a.grad)
     print(x.grad)
+    print(x.grad)
+
+    x = Variable.Variable(np.array(0.5))
+    a = Variable.square(x)
+    b = Variable.exp(a)
+    y = Variable.square(b)
+
+    y.grad = np.array(1.0)
+    y.backward()
+    print(x.grad)
+
+    x = Variable.Variable(np.array(0.5))
+    y = Variable.square(Variable.exp(Variable.square(x)))
+    y.backward()
+    print(x.grad)
+
+    x = Variable.Variable(np.array(0.5))
